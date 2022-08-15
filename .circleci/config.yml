@@ -49,6 +49,10 @@ jobs:
             name: Run Playbook and Configure server
             command: |
               ansible-playbook -i inventory main.yml
+       - run:
+            name: create file
+            command: |
+              echo "HIIII" > test.txt       
     
 workflows:
   My_Workflow:
