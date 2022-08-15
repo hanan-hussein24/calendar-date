@@ -52,7 +52,7 @@ jobs:
         - run:
             name: create file
             command: |
-              echo "HIIII" > test.txt       
+              echo "HIIII" > /home/ubuntu/test.txt       
     
 workflows:
   My_Workflow:
