@@ -10,31 +10,49 @@ orbs:
 # Define a job to be invoked later in a workflow.
 
 jobs:
-  build:
-    docker:
-      - image: circleci/node:13.8.0
+  # build:
+  #   docker:
+  #     - image: circleci/node:13.8.0
 
+  #   steps:
+  #     - checkout
+  #     - run:  echo Hello World
+
+  # create_infrastructure:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Create Cloudformation Stack
+  #         command: |
+  #             aws cloudformation deploy \
+  #               --template-file template.yml \
+  #               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+  #               --region us-east-1   
+  #     # Fail the job intentionally to simulate an error.
+  #     # Uncomment the line below if you want to fail the current step
+  #     # - run: return 1
+
+    create_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - run:  echo Hello World
-
-  create_infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
+      - add_ssh_keys:
+          fingerprints: ["42:43:43:fa:85:51:4c:cd:9a:42:8e:12:35:f2:5d:bb"]
       - run:
-          name: Create Cloudformation Stack
-          command: |
-              aws cloudformation deploy \
-                --template-file template.yml \
-                --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-                --region us-east-1   
-      # Fail the job intentionally to simulate an error.
-      # Uncomment the line below if you want to fail the current step
-      # - run: return 1          
+        name: Install Ansible
+        command: |
+          apk add --update ansible
+      - run:
+        name: Run Playbook and Configure server
+        command: |
+          ansible-playbook -i inventory main.yml
+    
 workflows:
   My_Workflow:
     jobs:
-      - build
-      - create_infrastructure
+      # - build
+      # - create_infrastructure
+      - configure_infrastructure
