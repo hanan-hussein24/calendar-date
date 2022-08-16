@@ -99,3 +99,5 @@ workflows:
       - create_infrastructure
       # - configure_infrastructur
       - smoke_test
+          requires:
+            - create_infrastructure
