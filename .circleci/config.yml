@@ -34,29 +34,45 @@ jobs:
   #     # Uncomment the line below if you want to fail the current step
   #     # - run: return 1
 
-    configure_infrastructure:
+    # configure_infrastructure:
+    #   docker:
+    #     - image: python:3.7-alpine3.11
+    #   steps:
+    #     - checkout
+    #     - add_ssh_keys:
+    #         fingerprints: ["42:43:43:fa:85:51:4c:cd:9a:42:8e:12:35:f2:5d:bb"]
+    #     - run:
+    #         name: Install Ansible
+    #         command: |
+    #           apk add --update ansible
+    #     - run:
+    #         name: Run Playbook and Configure server
+    #         command: |
+    #           ansible-playbook -i inventory main.yml
+
+
+    # Exercise: Smoke Testing
+   smoke_test:
       docker:
-        - image: python:3.7-alpine3.11
+        - image: alpine:latest
       steps:
-        - checkout
-        - add_ssh_keys:
-            fingerprints: ["42:43:43:fa:85:51:4c:cd:9a:42:8e:12:35:f2:5d:bb"]
+        - run: apk add --update curl
         - run:
-            name: Install Ansible
+            name: smoke test
             command: |
-              apk add --update ansible
-        - run:
-            name: Run Playbook and Configure server
-            command: |
-              ansible-playbook -i inventory main.yml
-        - run:
-            name: create file
-            command: |
-              echo "HIIII" > /home/ubuntu/test.txt       
-    
+              URL="https://blog.udacity.com/"
+              # Test if website exists
+              if curl -s --head ${URL} 
+              then
+                return 0
+              else
+                return 1
+              fi
+
 workflows:
   My_Workflow:
     jobs:
       # - build
       # - create_infrastructure
-      - configure_infrastructure
+      # - configure_infrastructur
+      - smoke_test
